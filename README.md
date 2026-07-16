@@ -1,182 +1,353 @@
 # NovaCart
 
-A premium e-commerce shopping cart and authentication flow built with React, TypeScript, Redux Toolkit, and the Context API. NovaCart pulls live product data from the [Fake Store API](https://fakestoreapi.com/products) and demonstrates a production-style architecture for state management, routing, and accessible UI design.
+NovaCart is a modern e-commerce application built with React, TypeScript, Redux Toolkit, and the Context API. It uses the Fake Store API to fetch real product data and demonstrates how to build a scalable online shopping experience with clean architecture, responsive design, and efficient state management.
 
-![NovaCart](./docs/screenshots/home.png)
+---
 
-## Features
+# Features
 
-- Product catalog with live search, category filters, and sorting (price, rating, name)
-- Product detail pages with quantity selection and add-to-cart
-- Persistent shopping cart with quantity controls, subtotal/shipping/tax/total breakdown, and a confirm-before-clear modal
-- Mock authentication flow with inline validation, show/hide password, and a protected account page
-- Checkout flow that requires authentication, validates shipping details, and ends in a polished order-confirmation screen
-- Light and dark themes, persisted across sessions
-- Loading skeletons, empty states, and friendly error messages with retry actions throughout
-- Fully responsive, mobile-first layout with a mobile navigation menu
-- Custom 404 page and toast notifications for key actions
+NovaCart includes everything you'd expect from a modern shopping application:
 
-## Acceptance Criteria Checklist
+* Browse products from the Fake Store API
+* Search products instantly
+* Filter products by category
+* Sort products by price, rating, or name
+* View detailed product information
+* Select quantities before adding items to the cart
+* Fully functional shopping cart with:
 
-- [x] React Context API used for shared application state (`ThemeContext`)
-- [x] Redux Toolkit store with 3 slices: `products`, `cart`, `auth`
-- [x] `createAsyncThunk` used for real API calls (`fetchProducts`, `fetchProductById`) with pending/fulfilled/rejected handling
-- [x] Fully functional, responsive, and visually polished UI
-- [x] Cart persists across page refresh (localStorage)
-- [x] Authenticated session persists across page refresh (localStorage)
-- [x] Protected routes redirect unauthenticated users to login
-- [x] Loading, empty, success, and error states implemented
-- [x] Tests cover thunks, cart logic, theme toggling, login validation, protected routes, and a full add-to-cart flow
-- [x] Project builds with no TypeScript or ESLint errors
+  * Quantity controls
+  * Remove items
+  * Cart summary
+  * Shipping, tax, and total calculations
+  * Confirmation dialog before clearing the cart
+* Mock authentication system with validation
+* Protected account page
+* Secure checkout flow that requires login
+* Shipping form validation
+* Order confirmation page
+* Light and dark mode with saved preferences
+* Responsive design for desktop, tablet, and mobile
+* Loading skeletons, empty states, and helpful error messages
+* Toast notifications for important actions
+* Custom 404 page
 
-## Technology Stack
+---
 
-| Category | Choice |
-| --- | --- |
-| Framework | React 18 + Vite |
-| Language | TypeScript (strict mode) |
-| Global state | Redux Toolkit + React Redux |
-| Shared UI state | React Context API |
-| Routing | React Router v6 |
-| Styling | Tailwind CSS |
-| Icons | lucide-react |
-| Notifications | react-hot-toast |
-| Testing | Vitest + React Testing Library |
-| Linting/formatting | ESLint + Prettier |
+# Project Highlights
 
-## Architecture
+This project demonstrates several modern React development practices:
 
-The app follows a feature-based structure. Redux Toolkit owns data that is shared across many parts of the app and fetched from a server (`products`, `cart`, `auth`), while Context owns a single piece of pure UI state (`theme`) that every component needs but that has no server or async lifecycle. Pages compose feature components and hooks; components stay focused on presentation and delegate data access to typed Redux hooks.
+* Redux Toolkit for application state
+* React Context API for theme management
+* React Router v6 for navigation
+* TypeScript in strict mode
+* Tailwind CSS for styling
+* API integration using async thunks
+* Local storage persistence
+* Responsive UI
+* Reusable components
+* Clean folder organization
+* Comprehensive testing
 
-### Context API usage
+---
 
-`ThemeContext` (`src/context/ThemeContext.tsx`) provides `theme` and `toggleTheme` to the whole tree. It initializes from `localStorage` (falling back to the OS color-scheme preference), persists changes back to `localStorage`, and toggles the `dark` class on `<html>` so Tailwind's `dark:` variants apply globally. This is a clean fit for Context because it is synchronous, has no server round-trip, and is consumed by many unrelated components (header, buttons, toasts).
+# Tech Stack
 
-### Redux slices
+| Category         | Technology                     |
+| ---------------- | ------------------------------ |
+| Frontend         | React 18 + Vite                |
+| Language         | TypeScript                     |
+| State Management | Redux Toolkit                  |
+| UI State         | React Context API              |
+| Routing          | React Router v6                |
+| Styling          | Tailwind CSS                   |
+| Icons            | Lucide React                   |
+| Notifications    | React Hot Toast                |
+| Testing          | Vitest + React Testing Library |
+| Code Quality     | ESLint + Prettier              |
 
-- **`productsSlice`** — `products`, `selectedProduct`, `categories`, `searchQuery`, `selectedCategory`, `sortOption`, and separate loading/error state for the list vs. the detail view. Exposes a memoized-style selector, `selectFilteredProducts`, that applies search, category, and sort together.
-- **`cartSlice`** — cart `items` with `addItem`, `removeItem`, `increaseQuantity`, `decreaseQuantity`, and `clearCart` reducers. Derived totals (`subtotal`, `shipping`, `tax`, `total`) are computed with selectors rather than stored, so they can never drift out of sync with the item list. The store subscribes to cart changes and persists them to `localStorage`.
-- **`authSlice`** — mock `user`/session state driven by the `login` thunk, plus a `logout` reducer. The session persists in `localStorage` so a refresh keeps the user logged in.
+---
 
-### `createAsyncThunk` usage
+# Project Structure
 
-`fetchProducts` and `fetchProductById` (`src/features/products/productsSlice.ts`) call the Fake Store API through a small typed `productApi` service (`src/services/productApi.ts`) with centralized error handling. Both thunks pass through the abort `signal` so requests are cancelled if a component unmounts mid-flight, and both are fully wired through `pending` / `fulfilled` / `rejected` cases with user-facing loading skeletons and retryable error alerts. `login` in `authSlice` also uses `createAsyncThunk` to simulate a network round trip against the demo credentials.
+The project follows a feature-based architecture to keep the codebase organized and easy to maintain.
 
-## Installation
+```
+src/
+│
+├── app/                 # Redux store and hooks
+├── context/             # Theme context
+├── features/
+│   ├── auth/
+│   ├── cart/
+│   └── products/
+│
+├── services/            # API services
+├── components/
+│   ├── auth/
+│   ├── cart/
+│   ├── common/
+│   ├── layout/
+│   └── products/
+│
+├── pages/
+├── routes/
+├── hooks/
+├── utils/
+├── tests/
+│
+├── App.tsx
+└── main.tsx
+```
+
+---
+
+# State Management
+
+The application uses both Redux Toolkit and React Context, with each serving a different purpose.
+
+### Redux Toolkit
+
+Redux manages all application data that changes over time or comes from an external source.
+
+It includes three slices:
+
+### Products
+
+Handles:
+
+* Product list
+* Product details
+* Categories
+* Search
+* Filters
+* Sorting
+* Loading states
+* Error handling
+
+Product data is fetched using `createAsyncThunk` from the Fake Store API.
+
+### Cart
+
+Responsible for:
+
+* Adding products
+* Removing products
+* Updating quantities
+* Clearing the cart
+* Calculating totals
+* Persisting cart data in Local Storage
+
+### Authentication
+
+Provides a simple mock authentication flow including:
+
+* Login
+* Logout
+* Protected routes
+* Persistent user session
+
+---
+
+### Theme Context
+
+The Theme Context manages the application's light and dark mode.
+
+It:
+
+* Detects the user's preferred theme
+* Saves the selected theme to Local Storage
+* Applies Tailwind's dark mode across the application
+
+Since theme management is simple UI state without server interaction, React Context is a better fit than Redux.
+
+---
+
+# API
+
+NovaCart uses the public Fake Store API.
+
+Endpoints:
+
+```
+GET /products
+
+GET /products/:id
+
+GET /products/categories
+```
+
+The API base URL can be configured using:
+
+```
+VITE_API_BASE_URL
+```
+
+No API key is required.
+
+---
+
+# Installation
+
+Clone the repository and install the dependencies.
 
 ```bash
 npm install
 ```
 
-Copy the environment example and adjust if needed (the default already points at the Fake Store API):
+Copy the environment file.
 
 ```bash
 cp .env.example .env
 ```
 
-## Development
+---
+
+# Development
+
+Start the development server.
 
 ```bash
 npm run dev
 ```
 
-## Testing
+---
+
+# Running Tests
+
+Run all tests.
 
 ```bash
-npm run test           # run once
-npm run test:watch     # watch mode
-npm run test:coverage  # with coverage report
+npm run test
 ```
 
-## Build
+Watch mode.
+
+```bash
+npm run test:watch
+```
+
+Generate a coverage report.
+
+```bash
+npm run test:coverage
+```
+
+---
+
+# Build
+
+Create a production build.
 
 ```bash
 npm run build
-npm run preview   # preview the production build locally
 ```
 
-## Linting & Formatting
+Preview the production build locally.
+
+```bash
+npm run preview
+```
+
+---
+
+# Linting & Formatting
 
 ```bash
 npm run lint
+
 npm run format
 ```
 
-## Folder Structure
+---
+
+# Demo Login
 
 ```
-src/
-  app/            # Redux store and typed hooks
-  context/        # ThemeContext
-  features/
-    products/     # productsSlice, types
-    cart/         # cartSlice, types
-    auth/         # authSlice
-  services/       # productApi (Fake Store API client)
-  components/
-    common/       # Button, Modal, Skeleton, ErrorAlert, RatingStars
-    layout/        # Header, Footer, Layout
-    products/      # ProductCard, ProductGrid, FilterBar
-    cart/          # CartItemRow
-    auth/          # LoginForm, ProtectedRoute
-  pages/          # HomePage, ProductDetailPage, CartPage, LoginPage, AccountPage, CheckoutPage, NotFoundPage
-  routes/         # AppRoutes
-  hooks/          # useDebounce
-  utils/          # format, validation
-  tests/          # Vitest + Testing Library suites
-  App.tsx
-  main.tsx
+Email:
+demo@novacart.com
+
+Password:
+password123
 ```
 
-## Demo Credentials
+---
+
+# Deployment
+
+## Vercel
+
+1. Push the repository to GitHub.
+2. Import the repository into Vercel.
+3. Select **Vite** as the framework.
+4. Build command:
+
+```bash
+npm run build
+```
+
+5. Output directory:
 
 ```
-Email:    demo@novacart.com
-Password: password123
+dist
 ```
 
-## API Information
+6. Optionally configure:
 
-Product data is served by the public [Fake Store API](https://fakestoreapi.com/products) (`GET /products`, `GET /products/:id`, `GET /products/categories`). No API key is required. The base URL is configurable via `VITE_API_BASE_URL`.
+```
+VITE_API_BASE_URL
+```
 
-## Screenshots
+---
 
-Add screenshots of the running app here before publishing:
+## Netlify
 
-- `docs/screenshots/home.png` — catalog with filters
-- `docs/screenshots/product-detail.png` — product detail page
-- `docs/screenshots/cart.png` — cart with totals
-- `docs/screenshots/checkout-success.png` — order confirmation
-- `docs/screenshots/dark-mode.png` — dark theme
+1. Push the project to GitHub.
+2. Create a new site from the repository.
+3. Build command:
 
-## Deployment
+```bash
+npm run build
+```
 
-### Vercel
+4. Publish directory:
 
-1. Push this repository to GitHub.
-2. Import the repository at [vercel.com/new](https://vercel.com/new).
-3. Framework preset: **Vite**. Build command `npm run build`, output directory `dist`.
-4. Add `VITE_API_BASE_URL` as an environment variable if you want to override the default.
+```
+dist
+```
 
-### Netlify
+5. Add the required environment variables if needed.
 
-1. Push this repository to GitHub.
-2. Create a new site at [app.netlify.com](https://app.netlify.com) from the repository.
-3. Build command: `npm run build`. Publish directory: `dist`.
-4. Add `VITE_API_BASE_URL` under Site settings → Environment variables if needed.
+---
 
-## Known Limitations
+# Current Limitations
 
-- Authentication is fully mocked client-side; there is no real backend or token expiry.
-- The Fake Store API has a fixed catalog, so category counts and images are limited to what it provides.
-- Checkout does not integrate a real payment provider — order submission is simulated.
+* Authentication is simulated and does not use a real backend.
+* Product data depends entirely on the Fake Store API.
+* Payments are not integrated.
+* Checkout is simulated.
 
-## Future Improvements
+---
 
-- Wishlist / saved-items feature
-- Product reviews and Q&A
-- Real payment integration (e.g. Stripe) behind the checkout form
-- Pagination or infinite scroll for larger catalogs
-- End-to-end tests (Playwright/Cypress) covering full checkout flows
-#   - s t a t e - m a n a g e d - R e a c t - a p p  
- 
+# Possible Improvements
+
+Future versions could include:
+
+* Wishlist support
+* Product reviews and ratings
+* Stripe payment integration
+* Infinite scrolling or pagination
+* Order history
+* User profiles
+* Admin dashboard
+* Inventory management
+* Real authentication with JWT
+* Backend integration
+* End-to-end testing with Playwright or Cypress
+
+---
+
+# License
+
+This project is intended for learning and portfolio purposes. Feel free to modify and extend it for your own projects.
