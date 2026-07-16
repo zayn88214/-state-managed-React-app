@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Manrope", system-ui, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    @apply bg-nova-50 text-nova-950 dark:bg-nova-950 dark:text-nova-50;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  ::selection {
+    @apply bg-accent-200 text-nova-950;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.accent.500");
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  * {
+    @apply border-nova-100 dark:border-nova-800;
+  }
+}
+
+@layer components {
+  /* Floating glass surface — reserved for the sticky header while scrolling. */
+  .glass-surface {
+    @apply bg-white/75 dark:bg-nova-950/70;
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-nova-100 dark:bg-nova-800;
+  }
+
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0 animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 400px 100%;
+  }
+
+  /* Reusable eyebrow label used above section headings site-wide. */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.14em] text-accent-600 dark:text-accent-400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
